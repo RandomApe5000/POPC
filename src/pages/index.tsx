@@ -5,11 +5,14 @@ import Minter from "../components/Minter";
 
 const Home: NextPage = () => {
   return (
-    <div className="relative min-h-screen font-futura">
-      <Header />
-      <Minter />
-      <Footer />
-    </div>
+    <>
+      <div className="background"></div>
+      <div className="wrapper">
+        <Header />
+        <Minter />
+        <Footer />
+      </div>
+    </>
   );
 };
 

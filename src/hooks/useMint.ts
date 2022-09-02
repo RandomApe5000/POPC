@@ -1,5 +1,4 @@
 import {
-  ProviderChainsNotFound,
   useAccount,
   useContractRead,
   useContractWrite,
@@ -13,7 +12,6 @@ import axios from "axios";
 import { ethers } from "ethers";
 import toast from "react-hot-toast";
 import getETHError from "../utils/getETHError";
-
 
 const usdcConfig = {
   addressOrName: USDC_ADDRESS,
@@ -29,7 +27,7 @@ const useMint = () => {
   const account = useAccount();
   const { chain } = useNetwork();
 
-  const [buttonText, setButtonText] = useState("mint")
+  const [buttonText, setButtonText] = useState("Mint now");
   const [isDisabled, setIsDisabled] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState<"eth" | "usdc">("eth");
@@ -133,7 +131,6 @@ const useMint = () => {
       }
 
       if (isPublicSaleOpen) {
-        setButtonText("Mint");
         const txId = (
           await (
             await publicMint({
@@ -148,21 +145,17 @@ const useMint = () => {
           ).wait()
         ).transactionHash;
         setTxId(txId);
-        setTimeout(() => {
-          setTxId("");
-        }, 10000);
         return;
       }
 
       if (isWhitelistSaleOpen) {
-        setButtonText("Mint");
         const {
           data: { proof },
         } = await axios.get(`/api/merkletree/${account.address}`);
 
         if (proof.length === 0) {
           toast.error("You must be whitelisted in-order to mint");
-          return; 
+          return;
         }
 
         const txId = await (
@@ -183,11 +176,9 @@ const useMint = () => {
           ).wait()
         ).transactionHash;
         setTxId(txId);
-        setTimeout(() => {
-          setTxId("");
-        }, 10000);
         return;
       }
+
       if (!isWhitelistSaleOpen && !isPublicSaleOpen) {
         const {
           data: { proof },
@@ -201,8 +192,6 @@ const useMint = () => {
           toast.error("You must be whitelisted in-order to mint");
           return; 
         }
-        
-
       }
 
     } catch (error: any) {
@@ -211,16 +200,15 @@ const useMint = () => {
 
       console.error(error);
     } finally {
-      setButtonText("Mint");
+      setButtonText("Mint now");
       setIsDisabled(false);
     }
-
   };
 
   return {
     isLoading: !isLoaded,
     mint,
-    maxSupply: maxSupply?.toString(),
+    maxSupply: '10.000', /*maxSupply?.toString()*/
     totalSupply: totalSupply?.toString(),
     buttonText,
     isDisabled,
@@ -257,6 +245,28 @@ const useMint = () => {
               quantity!
             )
           );
+    },
+    ethPrice: async () => {
+      return isWhitelistSaleOpen
+        ? ethers.utils.formatEther(
+            (whitelistEtherCost ?? (await fetchWhitelistEtherCost()).data)?.mul(
+              quantity!
+            )
+          )
+        : ethers.utils.formatEther(
+            (publicEtherCost ?? (await fetchPublicEtherCost()).data)?.mul(
+              quantity!
+            )
+          );
+    },
+    usdcPrice: async () => {
+      return isWhitelistSaleOpen
+        ? (whitelistUSDCCost ?? (await fetchWhitelistUSDCCost()).data)
+            ?.mul(quantity)
+            .toString()
+        : (publicUSDCCost ?? (await fetchPublicUSDCCost()).data)
+            ?.mul(quantity)
+            .toString();
     },
   };
 };

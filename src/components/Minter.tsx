@@ -2,9 +2,13 @@ import { useEffect, useState } from "react";
 import useMint from "../hooks/useMint";
 import CompletedMinting from "./CompletedMinting";
 import ConnectButton from "./ConnectButton";
+import IconMinus from "./IconMinus";
+import IconPlus from "./IconPlus";
 
 const Minter = () => {
   const [fetchedMintPrice, setFetchedMintPrice] = useState("");
+  const [fetchedEthPrice, setFetchedEthPrice] = useState("");
+  const [fetchedUsdcPrice, setFetchedUsdcPrice] = useState("");
 
   const {
     isLoggedIn,
@@ -12,6 +16,8 @@ const Minter = () => {
     totalSupply,
     saleStatus: { isPublicSaleOpen, isWhitelistSaleOpen },
     mintPrice,
+    ethPrice,
+    usdcPrice,
     setPaymentMethod,
     paymentMethod,
     quantity,
@@ -30,133 +36,144 @@ const Minter = () => {
     })();
   }, [mintPrice, paymentMethod, quantity]);
 
+  useEffect(() => {
+    (async () => {
+      const fetchedEthPrice = await ethPrice();
+      setFetchedEthPrice(fetchedEthPrice!);
+    })();
+  }, [ethPrice, quantity]);
+
+  useEffect(() => {
+    (async () => {
+      const fetchedUsdcPrice = await usdcPrice();
+      setFetchedUsdcPrice(fetchedUsdcPrice!);
+    })();
+  }, [usdcPrice, quantity]);
+
   return (
-    <div className="mx-auto flex max-w-7xl flex-col items-center px-4 md:mt-28 md:flex-row">
+    <div className="main">
       <CompletedMinting
-        txId={txId}
-        onClose={() => {
-          setTxId("");
-        }}
-      />
-      <div className="flex-1 md:w-[50%]">
-        <img src="/images/popcult-banner.gif" alt="Popcult Banner" />
-      </div>
-      <div
-        className={`${
-          isLoggedIn ? "h-[800px]" : "h-[450px]"
-        } flex-1 py-2 md:w-[50%] md:px-3`}
-      >
-        <div className="flex h-full w-full flex-col items-center justify-center rounded-md p-10 md:p-20">
-          {isLoggedIn ? (
-            <div className="flex flex-col items-center justify-center">
-              <h2 className="text-3xl font-bold md:text-4xl">
-                {totalSupply}/{maxSupply}
-              </h2>
-              {!isWhitelistSaleOpen && !isPublicSaleOpen && (
-                <h3 className="mt-2 text-xl font-bold">
-                  Sale Is Paused
-                </h3>
-              )}
-              {isWhitelistSaleOpen && (
-                <h3 className="mt-2 text-xl font-bold">
-                  Seed Sale Is Open
-                </h3>
-              )}
-              {isPublicSaleOpen && (
-                <h3 className="mt-2 text-xl font-bold">Public Sale Is Open</h3>
-              )}
-              <img
-                src="/images/mint.gif"
-                alt="Popcult Packet"
-                className="w-[80%]"
-              />
-
-              <div className="mt-3 flex w-full justify-between font-bold">
-                <h4 className="text-lg">
-                  Mint Price: {fetchedMintPrice}
-                  {paymentMethod.toUpperCase()}
-                </h4>
-
-                <div className="flex items-center space-x-3">
-                  <button
-                    className="flex h-full items-center justify-center rounded-lg bg-zinc-800 px-2 text-2xl leading-[0] text-white"
-                    onClick={() => {
-                      if (quantity - 1 >= 1) {
-                        setQuantity((quantity) => quantity - 1);
-                      }
-                    }}
-                  >
-                    -
-                  </button>
-                  <p>{quantity}</p>
-                  <button
-                    className="flex h-full items-center justify-center rounded-lg bg-zinc-800 px-2 leading-[0] text-white"
-                    onClick={() => {
-                      if (quantity + 1 <= 10) {
-                        setQuantity((quantity) => quantity + 1);
-                      }
-                    }}
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-x-5 text-center">
-                <h4 className="mt-8 text-lg font-semibold">
-                  What payment method would you like to use?
-                </h4>
-
-                <span className="space-x-2">
-                  <input
-                    type="radio"
-                    id="eth"
-                    value="ETH"
-                    checked={paymentMethod === "eth"}
-                    onChange={() => {
-                      setPaymentMethod("eth");
-                    }}
-                  />
-                  <label htmlFor="html">ETH</label>
-                </span>
-                <span className="space-x-2">
-                  <input
-                    type="radio"
-                    id="usdc"
-                    value="USDC"
-                    checked={paymentMethod === "usdc"}
-                    onChange={() => {
-                      setPaymentMethod("usdc");
-                    }}
-                  />
-                  <label htmlFor="css">USDC</label>
-                </span>
-              </div>
-
-              <button
-                className="mt-10 rounded-full bg-[#373a40] py-3 px-8 font-bold text-white disabled:cursor-not-allowed disabled:opacity-80"
-                onClick={async () => {
-                  await mint();
-                }}
-                disabled={isDisabled}
-              >
-                {buttonText}
-              </button>
+          txId={txId}
+          onClose={() => {
+            setTxId("");
+          }}
+        />
+      <div className="container">
+        <div className="columns">
+          <div className="column">
+            <img
+              className="img-booster"
+              src="/images/PopCult---Booster-Pack_loop_alpha_1280.gif"
+              alt="Popcult Packet"
+              onClick={() => {
+                if (quantity + 1 <= 10) {
+                  setQuantity((quantity) => quantity + 1);
+                }
+              }}
+            />
+          </div>
+          <div className="column">
+            <div className="content content-mint">
+                    <div className="content content-intro">
+                      {isWhitelistSaleOpen && (
+                        <h6>Seed Sale is open</h6>
+                      )}
+                      {!isWhitelistSaleOpen && !isPublicSaleOpen && (
+                        <h6>Sale is Closed</h6>
+                      )}
+                      {isPublicSaleOpen && (
+                        <h6>Public sale is open</h6>
+                      )}
+                      <h1>{totalSupply}/{maxSupply} <span>Pop Cults Minted</span></h1>
+                    </div>
+                    <div className="content content-quantity">
+                      <h4>
+                        Select quantity
+                      </h4>
+                      <div className="input-row">
+                        <span className="input-holder">
+                          <button
+                            className="btn-quantity minus"
+                            onClick={() => {
+                              if (quantity - 1 >= 1) {
+                                setQuantity((quantity) => quantity - 1);
+                              }
+                            }}
+                          >
+                           <IconMinus />
+                          </button>
+                        </span>
+                        <span className="input-holder">
+                          <p>{quantity}</p>
+                        </span>
+                        <span className="input-holder">
+                          <button
+                            className="btn-quantity plus"
+                            onClick={() => {
+                              if (quantity + 1 <= 10) {
+                                setQuantity((quantity) => quantity + 1);
+                              }
+                            }}
+                          >
+                            <IconPlus />
+                          </button>
+                        </span>
+                      </div>
+                    </div>
+                    <div className="content content-payment">
+                      <h4>How would you like to pay?</h4>
+                      <div className="input-row">
+                        <span className="input-holder">
+                          <input
+                            type="radio"
+                            id="eth"
+                            value="ETH"
+                            checked={paymentMethod === "eth"}
+                            onChange={() => {
+                              setPaymentMethod("eth");
+                            }}
+                          />
+                          <label className="label-eth" htmlFor="eth">{fetchedEthPrice} <span>ETH</span></label>
+                        </span>
+                        <span className="input-holder">
+                          <input
+                            type="radio"
+                            id="usdc"
+                            value="USDC"
+                            checked={paymentMethod === "usdc"}
+                            onChange={() => {
+                              setPaymentMethod("usdc");
+                            }}
+                          />
+                          <label className="label-usdc" htmlFor="usdc">{fetchedUsdcPrice} <span>USDC</span></label>
+                        </span>
+                      </div>
+                    </div>
+                    {/* /*<div className="content content-price">
+                      <h6>Mint Price</h6>
+                      <p>{fetchedMintPrice} {paymentMethod.toUpperCase()}</p>
+                    </div> */}
+                    {isLoggedIn ? (
+                      <>
+                        <div className="content content-action">
+                          <button
+                          className="btn"
+                          onClick={async () => {
+                          await mint();
+                          }}
+                          disabled={isDisabled}
+                          >
+                          {buttonText}
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <ConnectButton />
+                      </>
+                    )}
             </div>
-          ) : (
-            <>
-              <h1 className="text-center text-4xl font-bold">Popcult NFT</h1>
-
-              <p className="mt-5 text-center text-xl">
-                Pop Cult refers to &apos;Popular Culture&apos; and at the same
-                time uses the word &apos;cult&apos; to describe the community
-                surrounding it. High-brow art, 90&apos;s cartoons: the source of
-                inspiration is endless.
-              </p>
-
-              <ConnectButton />
-            </>
-          )}
+          </div>
         </div>
       </div>
     </div>

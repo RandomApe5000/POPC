@@ -17,22 +17,24 @@ const ConnectButton = () => {
           }
 
           return (
-            <button
-              onClick={() => {
-                if (!address) {
-                  openConnectModal();
-                } else {
-                  switchNetwork!(CHAIN.id);
-                }
-              }}
-              className="mt-10 rounded-full bg-[#373a40] py-3 px-8 font-bold text-white"
-            >
-              {!address
-                ? "Connect Wallet"
-                : chain?.id != CHAIN.id &&
-                  address &&
-                  `Switch Network To ${CHAIN.name}`}
-            </button>
+            <div className="content-action">
+              <button
+                onClick={() => {
+                  if (!address) {
+                    openConnectModal();
+                  } else {
+                    switchNetwork!(CHAIN.id);
+                  }
+                }}
+                className="btn"
+              >
+                {!address
+                  ? "Connect Wallet"
+                  : chain?.id != CHAIN.id &&
+                    address &&
+                    `Switch Network To ${CHAIN.name}`}
+              </button>
+            </div>
           );
         }}
       </Connect.Custom>

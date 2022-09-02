@@ -2,8 +2,8 @@ import { chain } from "wagmi";
 
 export const CHAIN = chain.rinkeby;
 
-export const CONTRACT_ADDRESS = "0x9dE36CE9CB3E5dFD3766676C12A6176D3EafD7E3";
-export const USDC_ADDRESS = "0x8652F156A2428EBe96e227548F58330D21E3b895";
+export const CONTRACT_ADDRESS = "0xF1Fd40014a9e8545fcc2fb409e30e5e9Dc605531";
+export const USDC_ADDRESS = "0x8652f156a2428ebe96e227548f58330d21e3b895";
 
 export const TWITTER_URL = "https://twitter.com/PopCult_NFT";
 export const DISCORD_URL = "https://discord.com/invite/popcult";

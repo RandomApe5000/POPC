@@ -19,7 +19,7 @@ const CompletedMinting: FC<CompletedMintingProps> = ({ onClose, txId }) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-25" />
+          <div className="fixed inset-0 bg-black bg-opacity-75" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -33,12 +33,12 @@ const CompletedMinting: FC<CompletedMintingProps> = ({ onClose, txId }) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-xl bg-white text-left align-middle shadow-xl transition-all">
-                <img
-                  src="/images/mint-completed.gif"
-                  alt="Mint Completed"
-                  className="w-full"
-                />
+              <Dialog.Panel className="content-inner w-full max-w-2xl transform overflow-hidden rounded-xl bg-white text-left align-middle shadow-xl transition-all">
+                <h1>Congrats! 🥳</h1>
+                <p>Thanks for minting and welcome to Pop Cult. Your NFT will be visible in your wallet and on <a href="https://opensea.io/" target="_blank">OpenSea</a> shortly.</p>
+                <div className="content-action">
+                  <a className="btn" onClick={onClose}>Close</a>
+                </div>
               </Dialog.Panel>
             </Transition.Child>
           </div>
